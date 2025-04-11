@@ -2,10 +2,12 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../../features/auth/screens/login-screen';
 import RegisterScreen from '../../features/auth/screens/register-screen';
+import AuthPage from '../../features/auth/screens/auth-page';
 import { useTheme } from '../providers/theme-provider';
 
 // Define the auth stack navigator types
 export type AuthStackParamList = {
+  Auth: undefined;
   Login: undefined;
   Register: undefined;
 };
@@ -17,7 +19,7 @@ const AuthNavigator = () => {
   
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Auth"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -31,6 +33,14 @@ const AuthNavigator = () => {
         cardStyle: { backgroundColor: colors.background },
       }}
     >
+      <Stack.Screen 
+        name="Auth" 
+        component={AuthPage} 
+        options={{ 
+          title: 'Authentication',
+          headerShown: false 
+        }} 
+      />
       <Stack.Screen 
         name="Login" 
         component={LoginScreen} 
