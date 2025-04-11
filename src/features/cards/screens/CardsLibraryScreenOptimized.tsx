@@ -13,6 +13,7 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../../app/providers/theme-provider';
 import CardListItem from '../components/CardListItem';
 import { FilterGroup } from '../components/FilterRow';
+import MobileHeader from '../components/MobileHeader';
 import { useAccessibilitySettings } from '../../../app/providers/accessibility-provider';
 
 // Mock data
@@ -388,9 +389,20 @@ const CardsLibraryScreenOptimized = () => {
   
   const keyExtractor = item => item.id;
   
+  // Handle menu item press
+  const handleMenuItemPress = useCallback((menuItem: string) => {
+    console.log(`Menu item pressed: ${menuItem}`);
+    // Would handle navigation in a real app
+  }, []);
+  
   // Main render
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <MobileHeader 
+        title="G-Gaming" 
+        onMenuItemPress={handleMenuItemPress}
+        showNotifications={true}
+      />
       <FlatList
         data={mockCards}
         renderItem={renderItem}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../../app/providers/theme-provider';
+import MobileHeader from '../components/MobileHeader';
 
 // Mock data for cards
 const mockCards = [
@@ -333,8 +334,19 @@ const CardsLibraryScreen = () => {
     </View>
   );
   
+  // Handle menu item press
+  const handleMenuItemPress = useCallback((menuItem: string) => {
+    console.log(`Menu item pressed: ${menuItem}`);
+    // Would handle navigation in a real app
+  }, []);
+  
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <MobileHeader 
+        title="G-Gaming" 
+        onMenuItemPress={handleMenuItemPress}
+        showNotifications={true}
+      />
       <FlatList
         data={mockCards}
         renderItem={renderCard}
