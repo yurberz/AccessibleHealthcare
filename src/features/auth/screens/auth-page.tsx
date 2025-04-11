@@ -7,40 +7,241 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Dimensions,
-  Image,
   useWindowDimensions,
+  TextInput,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
-import { LoginForm } from '../components/login-form';
-import { RegisterForm } from '../components/register-form';
-import { AccessibleText } from '../../../core/ui/accessible-text';
-import { Button } from '../../../core/ui/button';
+import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
+import { useAuth } from '../../../hooks/useAuth';
 import { useTheme } from '../../../app/providers/theme-provider';
 import { typography } from '../../../core/constants/typography';
-import { useAuth } from '../../../hooks/useAuth';
-import { useNavigation } from '@react-navigation/native';
+import { AccessibleText } from '../../../core/ui/accessible-text';
+import { Button } from '../../../core/ui/button';
 
 enum AuthMode {
   LOGIN = 'login',
   REGISTER = 'register',
 }
 
+// Login form component
+const LoginForm = () => {
+  const { colors } = useTheme();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { loginMutation } = useAuth();
+  
+  const handleSubmit = () => {
+    loginMutation.mutate({ email, password });
+  };
+  
+  return (
+    <View style={styles.formInner}>
+      <View style={styles.field}>
+        <AccessibleText 
+          style={[styles.label, { color: colors.text }]} 
+          textType="label"
+        >
+          Email
+        </AccessibleText>
+        <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+          <TextInput
+            style={[styles.input, { color: colors.text }]}
+            placeholder="Enter your email"
+            placeholderTextColor={colors.textSecondary}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            accessibilityLabel="Email address input"
+          />
+        </View>
+      </View>
+      
+      <View style={styles.field}>
+        <AccessibleText 
+          style={[styles.label, { color: colors.text }]} 
+          textType="label"
+        >
+          Password
+        </AccessibleText>
+        <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+          <TextInput
+            style={[styles.input, { color: colors.text }]}
+            placeholder="Enter your password"
+            placeholderTextColor={colors.textSecondary}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            autoComplete="password"
+            accessibilityLabel="Password input"
+          />
+        </View>
+      </View>
+      
+      <Button
+        title="Sign In"
+        onPress={handleSubmit}
+        variant="primary"
+        isLoading={loginMutation.isPending}
+        style={styles.submitButton}
+        accessibilityLabel="Sign in button"
+      />
+    </View>
+  );
+};
+
+// Register form component
+const RegisterForm = () => {
+  const { colors } = useTheme();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { registerMutation } = useAuth();
+  
+  const handleSubmit = () => {
+    registerMutation.mutate({ 
+      email, 
+      password,
+      firstName,
+      lastName
+    });
+  };
+  
+  return (
+    <View style={styles.formInner}>
+      <View style={styles.nameFields}>
+        <View style={[styles.field, styles.nameField]}>
+          <AccessibleText 
+            style={[styles.label, { color: colors.text }]} 
+            textType="label"
+          >
+            First Name
+          </AccessibleText>
+          <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              placeholder="First name"
+              placeholderTextColor={colors.textSecondary}
+              value={firstName}
+              onChangeText={setFirstName}
+              autoComplete="given-name"
+              accessibilityLabel="First name input"
+            />
+          </View>
+        </View>
+        
+        <View style={[styles.field, styles.nameField]}>
+          <AccessibleText 
+            style={[styles.label, { color: colors.text }]} 
+            textType="label"
+          >
+            Last Name
+          </AccessibleText>
+          <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              placeholder="Last name"
+              placeholderTextColor={colors.textSecondary}
+              value={lastName}
+              onChangeText={setLastName}
+              autoComplete="family-name"
+              accessibilityLabel="Last name input"
+            />
+          </View>
+        </View>
+      </View>
+      
+      <View style={styles.field}>
+        <AccessibleText 
+          style={[styles.label, { color: colors.text }]} 
+          textType="label"
+        >
+          Email
+        </AccessibleText>
+        <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+          <TextInput
+            style={[styles.input, { color: colors.text }]}
+            placeholder="Enter your email"
+            placeholderTextColor={colors.textSecondary}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            accessibilityLabel="Email address input"
+          />
+        </View>
+      </View>
+      
+      <View style={styles.field}>
+        <AccessibleText 
+          style={[styles.label, { color: colors.text }]} 
+          textType="label"
+        >
+          Password
+        </AccessibleText>
+        <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
+          <TextInput
+            style={[styles.input, { color: colors.text }]}
+            placeholder="Create a password"
+            placeholderTextColor={colors.textSecondary}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            autoComplete="new-password"
+            accessibilityLabel="Password input"
+          />
+        </View>
+      </View>
+      
+      <View style={styles.privacyContainer}>
+        <AccessibleText 
+          style={[styles.privacyText, { color: colors.textSecondary }]}
+          textType="caption"
+        >
+          By creating an account, you agree to our Privacy Policy and Terms of Service. Your medical information will be handled securely according to HIPAA and GDPR regulations.
+        </AccessibleText>
+      </View>
+      
+      <Button
+        title="Create Account"
+        onPress={handleSubmit}
+        variant="primary"
+        isLoading={registerMutation.isPending}
+        style={styles.submitButton}
+        accessibilityLabel="Create account button"
+      />
+    </View>
+  );
+};
+
 const AuthPage = () => {
   const { colors, colorScheme } = useTheme();
   const { width } = useWindowDimensions();
-  const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.LOGIN);
   const navigation = useNavigation();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   // Redirect to home if already logged in
   React.useEffect(() => {
     if (user) {
-      navigation.navigate('Home' as never);
+      navigation.navigate('Main' as never);
     }
   }, [user, navigation]);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   const isDesktopLayout = width > 768;
 
@@ -97,9 +298,9 @@ const AuthPage = () => {
 
                 <View style={styles.formContainer}>
                   {authMode === AuthMode.LOGIN ? (
-                    <LoginForm setLoading={setIsLoading} />
+                    <LoginForm />
                   ) : (
-                    <RegisterForm setLoading={setIsLoading} />
+                    <RegisterForm />
                   )}
                 </View>
 
@@ -203,6 +404,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   keyboardAvoidingView: {
     flex: 1,
   },
@@ -296,6 +502,45 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     maxWidth: 400,
+  },
+  formInner: {
+    width: '100%',
+  },
+  field: {
+    marginBottom: 16,
+  },
+  nameFields: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  nameField: {
+    width: '48%',
+  },
+  label: {
+    fontSize: typography.fontSize.small,
+    fontFamily: typography.fontFamily.medium,
+    marginBottom: 6,
+  },
+  inputContainer: {
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  input: {
+    fontSize: typography.fontSize.medium,
+    fontFamily: typography.fontFamily.regular,
+  },
+  privacyContainer: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  privacyText: {
+    fontSize: typography.fontSize.xsmall,
+    fontFamily: typography.fontFamily.regular,
+    textAlign: 'center',
+  },
+  submitButton: {
+    marginTop: 8,
   },
   switchModeContainer: {
     flexDirection: 'row',

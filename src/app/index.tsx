@@ -7,7 +7,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useAccessibilitySettings } from './providers/accessibility-provider';
 import { useTheme } from './providers/theme-provider';
 import NavigationRoot from './navigation';
-import { useAuthStore } from '../features/auth/store/auth-store';
 import { colors } from '../core/constants/colors';
 
 // Keep the splash screen visible until app is ready
@@ -17,9 +16,8 @@ const AppContainer = () => {
   const [appIsReady, setAppIsReady] = useState(false);
   const { colorScheme } = useTheme();
   const { fontScale } = useAccessibilitySettings();
-  const checkAuth = useAuthStore((state) => state.checkAuth);
 
-  // Load resources and check auth state
+  // Load resources
   useEffect(() => {
     async function prepare() {
       try {
@@ -29,9 +27,6 @@ const AppContainer = () => {
         //   'Inter-Medium': require('../../assets/fonts/Inter-Medium.ttf'),
         //   'Inter-Bold': require('../../assets/fonts/Inter-Bold.ttf'),
         // });
-        
-        // Check if user is authenticated
-        await checkAuth();
       } catch (e) {
         console.warn('Error loading resources:', e);
       } finally {
@@ -41,7 +36,7 @@ const AppContainer = () => {
     }
 
     prepare();
-  }, [checkAuth]);
+  }, []);
 
   if (!appIsReady) {
     return (
@@ -51,20 +46,21 @@ const AppContainer = () => {
     );
   }
 
+  // Create a proper theme object for React Navigation
+  const navigationTheme = {
+    dark: colorScheme === 'dark',
+    colors: {
+      primary: colors.primary,
+      background: colorScheme === 'dark' ? colors.darkBackground : colors.lightBackground,
+      card: colorScheme === 'dark' ? colors.darkCard : colors.lightCard,
+      text: colorScheme === 'dark' ? colors.lightText : colors.darkText,
+      border: colors.border,
+      notification: colors.notification,
+    }
+  };
+
   return (
-    <NavigationContainer
-      theme={{
-        dark: colorScheme === 'dark',
-        colors: {
-          primary: colors.primary,
-          background: colorScheme === 'dark' ? colors.darkBackground : colors.lightBackground,
-          card: colorScheme === 'dark' ? colors.darkCard : colors.lightCard,
-          text: colorScheme === 'dark' ? colors.lightText : colors.darkText,
-          border: colors.border,
-          notification: colors.notification,
-        },
-      }}
-    >
+    <NavigationContainer theme={navigationTheme as any}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <NavigationRoot />
     </NavigationContainer>

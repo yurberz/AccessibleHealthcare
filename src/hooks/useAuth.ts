@@ -93,7 +93,7 @@ interface AuthProviderProps {
   queryClient: QueryClient;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children, queryClient }) => {
+export const AuthProvider = ({ children, queryClient }: AuthProviderProps) => {
   // Get current user
   const {
     data: user,
@@ -155,18 +155,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, queryClien
     },
   });
 
+  // Create the context value object
+  const contextValue: AuthContextType = {
+    user: user ?? null,
+    isLoading,
+    error,
+    loginMutation,
+    logoutMutation,
+    registerMutation
+  };
+
   // Provide auth context to children
   return (
-    <AuthContext.Provider
-      value={{
-        user: user ?? null,
-        isLoading,
-        error,
-        loginMutation,
-        logoutMutation,
-        registerMutation,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

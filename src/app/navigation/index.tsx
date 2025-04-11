@@ -1,10 +1,10 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AuthNavigator from './auth-navigator';
 import MainNavigator from './main-navigator';
-import { useAuthStore } from '../../features/auth/store/auth-store';
 import { useTheme } from '../providers/theme-provider';
+import { useAuth } from '../../hooks/useAuth';
+import { View, ActivityIndicator } from 'react-native';
 
 // Define the root stack navigator types
 export type RootStackParamList = {
@@ -15,12 +15,16 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const NavigationRoot = () => {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { user, isLoading } = useAuth();
   const { colors } = useTheme();
 
   // Show loading screen while checking authentication
   if (isLoading) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
   return (
@@ -30,7 +34,7 @@ const NavigationRoot = () => {
         cardStyle: { backgroundColor: colors.background },
       }}
     >
-      {!isAuthenticated ? (
+      {!user ? (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       ) : (
         <Stack.Screen name="Main" component={MainNavigator} />

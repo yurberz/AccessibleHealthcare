@@ -54,7 +54,7 @@ const AuthNavigator = () => {
         component={RegisterScreen} 
         options={{ 
           title: 'Create Account',
-          headerBackTitleVisible: false
+          headerBackTitle: '' // Use this instead of headerBackTitleVisible
         }} 
       />
     </Stack.Navigator>
